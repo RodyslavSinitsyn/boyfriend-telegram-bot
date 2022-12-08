@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.rsinitsyn.api.BoyfriendBotApi;
 import org.rsinitsyn.exception.EmptyMessageException;
+import org.rsinitsyn.handler.BaseCommandHandler;
 import org.rsinitsyn.handler.KeyBoardCommandHandler;
 import org.rsinitsyn.props.BotProperties;
 import org.springframework.stereotype.Service;
@@ -25,9 +26,11 @@ public class BoyfriendBot extends TelegramLongPollingBot implements BoyfriendBot
     private final BotProperties botProperties;
     private final ReplyKeyboardMarkup defaultReplyKeyboardMarkup;
     private final KeyBoardCommandHandler keyBoardCommandHandler;
+    private final BaseCommandHandler baseCommandHandler;
 
     @Override
     public void handleUpdate(Update update) {
+        log.info("-----------------------------------------");
         verifyMessage(update);
         rootMessageHandler(update.getMessage());
     }
@@ -37,8 +40,13 @@ public class BoyfriendBot extends TelegramLongPollingBot implements BoyfriendBot
         String text = message.getText();
         log.info("Bot got message from user: {}, text: {}", chat.getUserName(), text);
 
+        if (message.isCommand()) {
+            String commandResponse = baseCommandHandler.getResponseByCommand(message);
+            sendTextMessageBack(chat.getId(), commandResponse);
+            return;
+        }
         // try to handle keyboard commands
-        Optional<String> responseByText = keyBoardCommandHandler.getResponseByText(text);
+        Optional<String> responseByText = keyBoardCommandHandler.getResponseByText(message);
         if (responseByText.isPresent()) {
             sendTextMessageBack(chat.getId(), responseByText.get());
         } else {
