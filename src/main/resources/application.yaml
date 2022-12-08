@@ -1,0 +1,3 @@
+bot:
+  name: boyfriend_chad_bot
+  token: ${BFBOT_TOKEN}
