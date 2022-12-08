@@ -1,4 +1,4 @@
-package org.rsinitsyn.service;
+package org.rsinitsyn.api;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
 
