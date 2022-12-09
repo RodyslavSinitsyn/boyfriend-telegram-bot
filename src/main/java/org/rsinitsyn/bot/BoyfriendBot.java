@@ -15,6 +15,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -23,10 +24,14 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Slf4j
 public class BoyfriendBot extends TelegramLongPollingBot implements BoyfriendBotApi {
 
+    // business services
     private final BotProperties botProperties;
-    private final ReplyKeyboardMarkup defaultReplyKeyboardMarkup;
-    private final KeyBoardCommandHandler keyBoardCommandHandler;
     private final BaseCommandHandler baseCommandHandler;
+    private final KeyBoardCommandHandler keyBoardCommandHandler;
+
+    // telegram services
+    private final ReplyKeyboardMarkup defaultReplyKeyboardMarkup;
+    private final InlineKeyboardMarkup complimentVoteInlineKeyboardMarkup;
 
     @Override
     public void handleUpdate(Update update) {
@@ -60,6 +65,7 @@ public class BoyfriendBot extends TelegramLongPollingBot implements BoyfriendBot
         textMessage.setChatId(idToStr(chatId));
         textMessage.setText(text);
         textMessage.setReplyMarkup(defaultReplyKeyboardMarkup);
+        textMessage.setReplyMarkup(complimentVoteInlineKeyboardMarkup);
 
         sendAnyMessage(textMessage);
     }

@@ -1,12 +1,12 @@
 package org.rsinitsyn.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.rsinitsyn.utils.BotUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -33,8 +33,15 @@ public class ComplimentService {
                 String.class,
                 Collections.emptyMap()
         );
-        JsonNode jsonNode = objectMapper.readTree(response.getBody());
-        log.info("Response  from compliment server: {}", jsonNode);
-        return jsonNode.get("text").asText();
+        log.info("Response  from compliment server: {}", response);
+
+        ComplimentDto complimentDto = objectMapper.readValue(response.getBody(), ComplimentDto.class);
+
+        return BotUtils.addEmoji(
+                complimentDto.text(),
+                ":heart:", ":rose:");
+    }
+
+    record ComplimentDto(String id, String text) {
     }
 }
