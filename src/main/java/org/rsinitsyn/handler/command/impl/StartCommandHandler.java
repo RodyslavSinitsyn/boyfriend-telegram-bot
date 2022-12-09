@@ -3,8 +3,10 @@ package org.rsinitsyn.handler.command.impl;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.rsinitsyn.context.TelegramUserSession;
 import org.rsinitsyn.entity.TelegramUser;
 import org.rsinitsyn.handler.command.CommandHandler;
+import org.rsinitsyn.model.MessageWrapper;
 import org.rsinitsyn.repository.TelegramUserRepository;
 import org.rsinitsyn.service.LocaleMessageService;
 import org.springframework.stereotype.Component;
@@ -21,14 +23,16 @@ public class StartCommandHandler implements CommandHandler {
     private final TelegramUserRepository telegramUserRepository;
     private final LocaleMessageService messageService;
 
-    public SendMessage handleCommand(Message message) {
+    public SendMessage handleCommand(MessageWrapper messageWrapper) {
+        Message message = messageWrapper.getMessage();
         Chat chat = message.getChat();
+        TelegramUserSession session = messageWrapper.getSession();
 
         saveIfNotExists(message.getFrom());
 
         return SendMessage
                 .builder()
-                .text(messageService.getMessage("reply.start"))
+                .text(messageService.getMessage("reply.start", session.getLocale()))
                 .chatId(chat.getId())
                 .build();
     }

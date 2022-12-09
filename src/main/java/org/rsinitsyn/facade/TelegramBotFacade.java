@@ -4,7 +4,10 @@ import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.rsinitsyn.context.TelegramUserSession;
+import org.rsinitsyn.context.UserSessionStorage;
 import org.rsinitsyn.exception.EmptyMessageException;
+import org.rsinitsyn.model.MessageWrapper;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -14,6 +17,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 
+// Root Facade
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -21,6 +25,7 @@ public class TelegramBotFacade {
 
     private final CommandFacade commandFacade;
     private final KeyBoardCommandFacade keyBoardCommandFacade;
+    private final UserSessionStorage userSessionStorage;
 
     // telegram services
     private final ReplyKeyboardMarkup defaultReplyKeyboardMarkup;
@@ -50,9 +55,14 @@ public class TelegramBotFacade {
             return null;
         }
         Message message = update.getMessage();
+
+
         if (Objects.nonNull(message) && message.isCommand()) {
-            // TODO handle command
-            response = commandFacade.handle(message);
+            TelegramUserSession userSession = userSessionStorage.getOrCreate(message.getChatId());
+            response = commandFacade.handle(new MessageWrapper(
+                    message,
+                    userSession
+            ));
         } else if (Objects.nonNull(message) && message.hasText()) {
             log.info("New [message] from username: {}, chatId: {}, text: {}",
                     message.getFrom().getUserName(),
@@ -66,6 +76,7 @@ public class TelegramBotFacade {
 
         return response;
     }
+
 
     // TODO Remove?
     private void verifyMessage(Update update) {

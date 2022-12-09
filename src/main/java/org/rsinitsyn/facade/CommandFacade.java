@@ -5,6 +5,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.rsinitsyn.handler.command.CommandHandler;
+import org.rsinitsyn.model.MessageWrapper;
 import org.rsinitsyn.service.LocaleMessageService;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -21,7 +22,8 @@ public class CommandFacade {
     private final List<CommandHandler> commandHandlers;
     private final LocaleMessageService messageService;
 
-    public BotApiMethod<?> handle(Message message) {
+    public BotApiMethod<?> handle(MessageWrapper messageWrapper) {
+        Message message = messageWrapper.getMessage();
         User user = message.getFrom();
         List<MessageEntity> entities = message.getEntities();
 
@@ -50,11 +52,13 @@ public class CommandFacade {
             return SendMessage
                     .builder()
                     .chatId(user.getId())
-                    .text(messageService.getMessage("reply.invalidCommand"))
+                    .text(messageService.getMessage(
+                            "reply.invalidCommand",
+                            messageWrapper.getSession().getLocale()))
                     .build();
         }
 
-        return commandHandler.handleCommand(message);
+        return commandHandler.handleCommand(messageWrapper);
     }
 
     private CommandHandler getCommandHandler(String command) {
