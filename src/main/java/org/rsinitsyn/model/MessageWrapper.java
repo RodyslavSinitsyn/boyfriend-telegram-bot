@@ -2,7 +2,7 @@ package org.rsinitsyn.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.rsinitsyn.context.TelegramUserSession;
+import org.rsinitsyn.session.TelegramUserSession;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 @AllArgsConstructor

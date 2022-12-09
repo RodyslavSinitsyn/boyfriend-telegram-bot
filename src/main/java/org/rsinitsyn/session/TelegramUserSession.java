@@ -1,4 +1,4 @@
-package org.rsinitsyn.context;
+package org.rsinitsyn.session;
 
 import java.util.Locale;
 import lombok.Getter;

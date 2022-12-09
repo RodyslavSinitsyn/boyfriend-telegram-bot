@@ -22,11 +22,15 @@ public class BoyfriendBot extends TelegramLongPollingBot implements BoyfriendBot
 
     @Override
     public void handleUpdate(Update update) {
-        BotApiMethod<?> botApiMethod = facade.handleUpdate(update);
-        if (Objects.nonNull(botApiMethod)) {
-            send(botApiMethod);
-        } else {
-            log.debug("Does not need to send response back");
+        try {
+            BotApiMethod<?> botApiMethod = facade.handleUpdate(update);
+            if (Objects.nonNull(botApiMethod)) {
+                send(botApiMethod);
+            } else {
+                log.debug("Does not need to send response back");
+            }
+        } catch (Exception exception) {
+            log.error("Failed to handle user message", exception);
         }
     }
 

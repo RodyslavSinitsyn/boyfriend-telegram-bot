@@ -1,10 +1,9 @@
-package org.rsinitsyn.facade;
+package org.rsinitsyn.handler.command;
 
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.rsinitsyn.handler.command.CommandHandler;
 import org.rsinitsyn.model.MessageWrapper;
 import org.rsinitsyn.service.LocaleMessageService;
 import org.springframework.stereotype.Service;
@@ -38,7 +37,7 @@ public class CommandFacade {
         MessageEntity messageEntity = botCommand.get();
         String command = messageEntity.getText();
 
-        log.info("New [command] from username: {}, chatId: {}, text: {}",
+        log.info("New [command] from username: {}, chatId: {}, command: {}",
                 message.getFrom().getUserName(),
                 message.getChat().getId(),
                 command);

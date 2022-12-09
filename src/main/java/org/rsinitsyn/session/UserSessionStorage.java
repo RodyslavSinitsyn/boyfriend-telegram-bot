@@ -1,9 +1,9 @@
-package org.rsinitsyn.context;
+package org.rsinitsyn.session;
 
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.rsinitsyn.props.BotProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class UserSessionStorage {
 
-    private final Map<Long, TelegramUserSession> sessions = new HashMap<>();
+    private final Map<Long, TelegramUserSession> sessions = new ConcurrentHashMap<>();
 
     private final BotProperties botProperties;
 

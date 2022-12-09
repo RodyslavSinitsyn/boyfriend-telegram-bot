@@ -4,18 +4,20 @@ import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.rsinitsyn.context.TelegramUserSession;
-import org.rsinitsyn.context.UserSessionStorage;
+import org.rsinitsyn.components.KeyBoardComponents;
 import org.rsinitsyn.exception.EmptyMessageException;
+import org.rsinitsyn.handler.command.CommandFacade;
+import org.rsinitsyn.handler.keyboard.KeyBoardEvent;
+import org.rsinitsyn.handler.keyboard.KeyBoardEventFacade;
 import org.rsinitsyn.model.MessageWrapper;
+import org.rsinitsyn.session.TelegramUserSession;
+import org.rsinitsyn.session.UserSessionStorage;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 
 // Root Facade
 @Component
@@ -24,20 +26,15 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 public class TelegramBotFacade {
 
     private final CommandFacade commandFacade;
-    private final KeyBoardCommandFacade keyBoardCommandFacade;
+    private final KeyBoardEventFacade keyBoardEventFacade;
     private final UserSessionStorage userSessionStorage;
-
-    // telegram services
-    private final ReplyKeyboardMarkup defaultReplyKeyboardMarkup;
-    private final InlineKeyboardMarkup complimentVoteInlineKeyboardMarkup;
-
 
     // rsinitsyn - 538166938
     // fastysha - 408716263
     public BotApiMethod<?> handleUpdate(Update update) {
         log.info("-----------------------------------------------------");
 
-        BotApiMethod<?> response = null;
+        BotApiMethod<?> response;
 
         // whatever, just to log and do not throw an exception
         if (!update.hasCallbackQuery() && !update.hasMessage()) {
@@ -45,6 +42,12 @@ public class TelegramBotFacade {
             return null;
         }
 
+        Message message = update.getMessage();
+        if (Objects.isNull(message)) {
+            throw new EmptyMessageException("Message is null");
+        }
+
+        TelegramUserSession userSession = userSessionStorage.getOrCreate(message.getChatId());
         if (update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
             log.info("New [callback] from username: {}, chatId: {}, callbackId: {}",
@@ -54,25 +57,32 @@ public class TelegramBotFacade {
                     callbackQuery.getId());
             return null;
         }
-        Message message = update.getMessage();
 
-
-        if (Objects.nonNull(message) && message.isCommand()) {
-            TelegramUserSession userSession = userSessionStorage.getOrCreate(message.getChatId());
+        if (message.isCommand()) {
             response = commandFacade.handle(new MessageWrapper(
                     message,
                     userSession
             ));
-        } else if (Objects.nonNull(message) && message.hasText()) {
+        } else if (message.hasText() &&
+                KeyBoardEvent.hasText(message.getText())) {
+            response = keyBoardEventFacade.handle(new MessageWrapper(
+                    message,
+                    userSession
+            ));
+        } else {
+            // other user input
             log.info("New [message] from username: {}, chatId: {}, text: {}",
                     message.getFrom().getUserName(),
                     message.getChat().getId(),
                     message.getText());
-            response = keyBoardCommandFacade.handle(message);
+            response = SendMessage
+                    .builder()
+                    .chatId(message.getChatId())
+                    .text("Ку-ку")
+                    .build();
         }
 
-        // TODO Temp solution
-        ((SendMessage)response).setReplyMarkup(defaultReplyKeyboardMarkup);
+        ((SendMessage)response).setReplyMarkup(KeyBoardComponents.mainMenuKeyboardMarkup());
 
         return response;
     }

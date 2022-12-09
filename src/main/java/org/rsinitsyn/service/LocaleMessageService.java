@@ -1,7 +1,7 @@
 package org.rsinitsyn.service;
 
 import java.util.Locale;
-import org.rsinitsyn.context.UserSessionStorage;
+import org.rsinitsyn.session.UserSessionStorage;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
