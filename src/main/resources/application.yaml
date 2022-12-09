@@ -3,3 +3,30 @@ bot:
   token: ${BFBOT_TOKEN}
   nofity-on-startup: true
   notify-on-shutdown: true
+
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bf_bot
+    username: postgres
+    password: postgres
+    driverClassName: org.postgresql.Driver
+  jpa:
+    hibernate:
+      # TODO none
+      ddl-auto: update
+      naming:
+        # SnakeCase DB Naming
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    # TODO Work with DB Migration via Liquibase, bot Hibernate
+    enabled: false
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+logging:
+  level:
+    org.rsinitsyn: debug

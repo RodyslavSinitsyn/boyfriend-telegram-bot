@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.rsinitsyn.exception.EmptyMessageException;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -26,8 +27,13 @@ public class TelegramBotFacade {
     private final InlineKeyboardMarkup complimentVoteInlineKeyboardMarkup;
 
 
+    // rsinitsyn - 538166938
+    // fastysha - 408716263
     public BotApiMethod<?> handleUpdate(Update update) {
         log.info("-----------------------------------------------------");
+
+        BotApiMethod<?> response = null;
+
         if (update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
             log.info("New [callback] from username: {}, chatId: {}, callbackId: {}",
@@ -44,18 +50,19 @@ public class TelegramBotFacade {
                     message.getFrom().getUserName(),
                     message.getChat().getId(),
                     message.getText());
-            return commandFacade.handle(message);
-        }
-
-        if (Objects.nonNull(message) && message.hasText()) {
+            response = commandFacade.handle(message);
+        } else if (Objects.nonNull(message) && message.hasText()) {
             log.info("New [message] from username: {}, chatId: {}, text: {}",
                     message.getFrom().getUserName(),
                     message.getChat().getId(),
                     message.getText());
-            return keyBoardCommandFacade.handle(message);
+            response = keyBoardCommandFacade.handle(message);
         }
 
-        return null;
+        // TODO Temp solution
+        ((SendMessage)response).setReplyMarkup(defaultReplyKeyboardMarkup);
+
+        return response;
     }
 
     // TODO Remove?

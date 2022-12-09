@@ -3,10 +3,12 @@ package org.rsinitsyn.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.rsinitsyn.utils.BotUtils;
+import org.rsinitsyn.entity.RawCompliment;
+import org.rsinitsyn.repository.RawComplimentRepository;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +23,30 @@ public class ComplimentService {
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final RawComplimentRepository rawComplimentRepository;
 
     @SneakyThrows
     public String get(User user) {
+        String complimentText = getComplimentFromApi();
+
+        Optional<RawCompliment> complimentFromDb =
+                rawComplimentRepository.findByText(complimentText);
+
+        if (complimentFromDb.isEmpty()) {
+            RawCompliment rawCompliment = new RawCompliment();
+            rawCompliment.setText(complimentText);
+            rawComplimentRepository.save(rawCompliment);
+            log.debug("Compliment saved: {}", complimentText);
+        }
+
+        return complimentText;
+    }
+
+    record ComplimentDto(String id, String text) {
+    }
+
+    @SneakyThrows
+    private String getComplimentFromApi() {
         HttpEntity httpEntity = new HttpEntity(Map.of());
 
         ResponseEntity<String> response = restTemplate.exchange(
@@ -33,15 +56,11 @@ public class ComplimentService {
                 String.class,
                 Collections.emptyMap()
         );
-        log.info("Response  from compliment server: {}", response);
+        log.debug("Response from compliment API: {}", response);
 
         ComplimentDto complimentDto = objectMapper.readValue(response.getBody(), ComplimentDto.class);
 
-        return BotUtils.addEmoji(
-                complimentDto.text(),
-                ":heart:", ":rose:");
+        return complimentDto.text();
     }
 
-    record ComplimentDto(String id, String text) {
-    }
 }
