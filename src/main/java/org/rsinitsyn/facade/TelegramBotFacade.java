@@ -10,8 +10,8 @@ import org.rsinitsyn.handler.command.CommandFacade;
 import org.rsinitsyn.handler.keyboard.KeyBoardEvent;
 import org.rsinitsyn.handler.keyboard.KeyBoardEventFacade;
 import org.rsinitsyn.model.MessageWrapper;
-import org.rsinitsyn.session.TelegramUserSession;
-import org.rsinitsyn.session.UserSessionStorage;
+import org.rsinitsyn.model.TelegramUserSession;
+import org.rsinitsyn.service.UserSessionService;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -27,7 +27,7 @@ public class TelegramBotFacade {
 
     private final CommandFacade commandFacade;
     private final KeyBoardEventFacade keyBoardEventFacade;
-    private final UserSessionStorage userSessionStorage;
+    private final UserSessionService userSessionService;
 
     // rsinitsyn - 538166938
     // fastysha - 408716263
@@ -47,7 +47,7 @@ public class TelegramBotFacade {
             throw new EmptyMessageException("Message is null");
         }
 
-        TelegramUserSession userSession = userSessionStorage.getOrCreate(message.getChatId());
+        TelegramUserSession userSession = userSessionService.getOrCreate(message.getChatId());
         if (update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
             log.info("New [callback] from username: {}, chatId: {}, callbackId: {}",

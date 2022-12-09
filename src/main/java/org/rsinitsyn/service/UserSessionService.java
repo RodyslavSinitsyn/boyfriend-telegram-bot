@@ -1,10 +1,11 @@
-package org.rsinitsyn.session;
+package org.rsinitsyn.service;
 
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
+import org.rsinitsyn.model.TelegramUserSession;
 import org.rsinitsyn.props.BotProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,14 +13,14 @@ import org.springframework.stereotype.Service;
 // stateless
 @Service
 @Slf4j
-public class UserSessionStorage {
+public class UserSessionService {
 
     private final Map<Long, TelegramUserSession> sessions = new ConcurrentHashMap<>();
 
     private final BotProperties botProperties;
 
     @Autowired
-    public UserSessionStorage(BotProperties botProperties) {
+    public UserSessionService(BotProperties botProperties) {
         this.botProperties = botProperties;
     }
 
