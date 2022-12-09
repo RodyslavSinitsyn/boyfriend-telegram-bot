@@ -1,22 +1,23 @@
-package org.rsinitsyn.handler;
+package org.rsinitsyn.facade;
 
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.rsinitsyn.config.KeyBoardCommand;
 import org.rsinitsyn.service.ComplimentService;
 import org.rsinitsyn.service.InsultService;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 @Service
 @RequiredArgsConstructor
-public class KeyBoardCommandHandler {
+public class KeyBoardCommandFacade {
 
     private final ComplimentService complimentService;
     private final InsultService insultService;
 
-    public Optional<String> getResponseByText(Message message) {
+    public BotApiMethod<?> handle(Message message) {
         User user = message.getFrom();
         KeyBoardCommand command = KeyBoardCommand.ofText(message.getText());
 
@@ -30,6 +31,9 @@ public class KeyBoardCommandHandler {
             resultText = null;
         }
 
-        return Optional.ofNullable(resultText);
+        return SendMessage.builder()
+                .text(resultText)
+                .chatId(message.getChatId())
+                .build();
     }
 }

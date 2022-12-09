@@ -1,17 +1,19 @@
-package org.rsinitsyn.handler;
+package org.rsinitsyn.facade;
 
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 @Service
 @Slf4j
-public class BaseCommandHandler {
+public class CommandFacade {
 
-    public String getResponseByCommand(Message message) {
+    public BotApiMethod<?> handle(Message message) {
         User user = message.getFrom();
         List<MessageEntity> entities = message.getEntities();
 
@@ -28,6 +30,9 @@ public class BaseCommandHandler {
             default -> "Прости, но у меня нету такой команды";
         };
 
-        return description;
+        return SendMessage.builder()
+                .text(description)
+                .chatId(message.getChatId())
+                .build();
     }
 }
