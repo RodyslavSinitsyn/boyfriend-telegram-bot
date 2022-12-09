@@ -1,3 +1,5 @@
 bot:
   name: boyfriend_chad_bot
   token: ${BFBOT_TOKEN}
+  nofity-on-startup: true
+  notify-on-shutdown: true

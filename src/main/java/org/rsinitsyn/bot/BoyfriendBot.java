@@ -17,7 +17,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Slf4j
 public class BoyfriendBot extends TelegramLongPollingBot implements BoyfriendBotApi {
 
-    // business services
     private final BotProperties botProperties;
     private final TelegramBotFacade facade;
 
@@ -41,12 +40,16 @@ public class BoyfriendBot extends TelegramLongPollingBot implements BoyfriendBot
 
     @Override
     public void notifyOnInit() {
-
+        if (botProperties.getNotifyOnStartup()) {
+            // TODO Notify
+        }
     }
 
     @Override
     public void notifyOnShutdown() {
-
+        if (botProperties.getNotifyOnShutdown()) {
+            // TODO Notify
+        }
     }
 
     @Override
