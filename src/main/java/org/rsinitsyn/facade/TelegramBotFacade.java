@@ -34,6 +34,12 @@ public class TelegramBotFacade {
 
         BotApiMethod<?> response = null;
 
+        // whatever, just to log and do not throw an exception
+        if (!update.hasCallbackQuery() && !update.hasMessage()) {
+            log.debug("No callBack, no message, update: {}", update);
+            return null;
+        }
+
         if (update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
             log.info("New [callback] from username: {}, chatId: {}, callbackId: {}",
@@ -46,10 +52,6 @@ public class TelegramBotFacade {
         Message message = update.getMessage();
         if (Objects.nonNull(message) && message.isCommand()) {
             // TODO handle command
-            log.info("New [command] from username: {}, chatId: {}, text: {}",
-                    message.getFrom().getUserName(),
-                    message.getChat().getId(),
-                    message.getText());
             response = commandFacade.handle(message);
         } else if (Objects.nonNull(message) && message.hasText()) {
             log.info("New [message] from username: {}, chatId: {}, text: {}",

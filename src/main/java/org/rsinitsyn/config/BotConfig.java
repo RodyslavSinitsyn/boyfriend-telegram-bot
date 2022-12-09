@@ -20,14 +20,16 @@ import static org.rsinitsyn.config.KeyBoardCommand.INSULT;
 @Configuration
 public class BotConfig {
 
+    // TODO Init via list of CommandHandlers
     @Bean
     public SetMyCommands botCommands() {
         return SetMyCommands.builder()
                 .command(new BotCommand("/start", "get greeting message"))
-                .command(new BotCommand("/help", "get bot description"))
+                .command(new BotCommand("/lang", "toggle lang ru/en"))
                 .scope(new BotCommandScopeDefault())
                 .build();
     }
+
 
     @Bean
     public ReplyKeyboardMarkup defaultReplyKeyboardMarkup() {

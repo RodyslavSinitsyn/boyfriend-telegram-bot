@@ -10,4 +10,5 @@ public class BotProperties {
     private String token;
     private Boolean notifyOnStartup = Boolean.FALSE;
     private Boolean notifyOnShutdown = Boolean.FALSE;
+    private String defaultLocale;
 }
