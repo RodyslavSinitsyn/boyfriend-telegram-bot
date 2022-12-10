@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.rsinitsyn.model.MessageWrapper;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
@@ -16,7 +16,7 @@ public class KeyBoardEventFacade {
 
     private final List<KeyBoardEventHandler> keyBoardEventHandlers;
 
-    public BotApiMethod<?> handle(MessageWrapper messageWrapper) {
+    public PartialBotApiMethod<?> handle(MessageWrapper messageWrapper) {
         Message message = messageWrapper.getMessage();
 
         // cant be null here
@@ -40,7 +40,7 @@ public class KeyBoardEventFacade {
                     .build();
         }
 
-        return keyBoardEventHandler.handleEvent(messageWrapper);
+        return (PartialBotApiMethod<?>) keyBoardEventHandler.handleEvent(messageWrapper);
     }
 
     private KeyBoardEventHandler getHandler(KeyBoardEvent event) {

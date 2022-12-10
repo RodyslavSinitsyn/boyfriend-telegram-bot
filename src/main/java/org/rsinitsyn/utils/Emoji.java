@@ -4,7 +4,8 @@ import com.vdurmont.emoji.EmojiParser;
 
 public enum Emoji {
     HEART(":heart:"),
-    ROSE(":rose:");
+    ROSE(":rose:"),
+    CHECK_DONE(":heavy_check_mark:");
 
     Emoji(String value) {
         this.value = value;

@@ -3,6 +3,7 @@ package org.rsinitsyn.handler.command.impl;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.rsinitsyn.components.KeyBoardComponents;
 import org.rsinitsyn.entity.TelegramUser;
 import org.rsinitsyn.handler.command.CommandHandler;
 import org.rsinitsyn.model.MessageWrapper;
@@ -32,8 +33,9 @@ public class StartCommandHandler implements CommandHandler {
 
         return SendMessage
                 .builder()
-                .text(messageService.getMessage("reply.start", session.getLocale()))
                 .chatId(chat.getId())
+                .text(messageService.getMessage("reply.start", session.getLocale()))
+                .replyMarkup(KeyBoardComponents.mainMenuKeyboardMarkup())
                 .build();
     }
 
@@ -42,8 +44,8 @@ public class StartCommandHandler implements CommandHandler {
 
         if (telegramUserOpt.isEmpty()) {
             TelegramUser telegramUser = new TelegramUser();
-            telegramUser.setUsername(user.getUserName());
             telegramUser.setChatId(user.getId());
+            telegramUser.setUsername(user.getUserName());
 
             TelegramUser savedUser = telegramUserRepository.save(telegramUser);
 

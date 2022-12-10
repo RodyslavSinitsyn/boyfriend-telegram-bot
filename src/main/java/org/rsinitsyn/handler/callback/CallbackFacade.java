@@ -2,13 +2,16 @@ package org.rsinitsyn.handler.callback;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.rsinitsyn.dto.ComplimentCallbackDto;
+import org.rsinitsyn.entity.ComplimentGrade;
 import org.rsinitsyn.model.TelegramUserSession;
 import org.rsinitsyn.service.ComplimentService;
+import org.rsinitsyn.utils.Emoji;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
@@ -25,6 +28,7 @@ public class CallbackFacade {
     private final ComplimentService complimentService;
     private final ObjectMapper objectMapper;
 
+    // TODO Handle other callbacks
     @SneakyThrows
     public BotApiMethod<?> handleCallback(CallbackQuery callbackQuery, TelegramUserSession session) {
         Message message = callbackQuery.getMessage();
@@ -32,17 +36,23 @@ public class CallbackFacade {
 
         ComplimentCallbackDto complimentCallbackDto = objectMapper.readValue(jsonData, ComplimentCallbackDto.class);
 
-        complimentService.addLike(complimentCallbackDto.id());
+        log.debug("Compliment callback details, id: {}, grade: {}",
+                complimentCallbackDto.id(), complimentCallbackDto.g());
+        ComplimentGrade complimentGrade = ComplimentGrade.valueOf(complimentCallbackDto.g());
+        complimentService.updateGrade(message.getChatId(), complimentCallbackDto.id(), complimentGrade);
 
-        InlineKeyboardMarkup edited = complimentVoteInlineKeyboardMarkup(
-                complimentCallbackDto,
-                new ComplimentCallbackDto(complimentCallbackDto.cbId(), complimentCallbackDto.id())
-        );
+        InlineKeyboardMarkup existingMarkup = callbackQuery.getMessage().getReplyMarkup();
+
+        InlineKeyboardButton buttonToUpdate = existingMarkup.getKeyboard().stream()
+                .flatMap(Collection::stream)
+                .filter(btn -> btn.getText().equals(complimentGrade.name()))
+                .findFirst().orElseThrow();
+        buttonToUpdate.setText(buttonToUpdate.getText() + Emoji.CHECK_DONE);
 
         return EditMessageReplyMarkup.builder()
                 .chatId(message.getChatId())
                 .messageId(message.getMessageId())
-                .replyMarkup(edited)
+                .replyMarkup(existingMarkup)
                 .build();
     }
 
@@ -57,6 +67,7 @@ public class CallbackFacade {
                 .keyboardRow(buttons)
                 .build();
     }
+
     private InlineKeyboardButton simpleKeyBoardButton(String text, String callbackData) {
         InlineKeyboardButton button = new InlineKeyboardButton();
         button.setText(text);

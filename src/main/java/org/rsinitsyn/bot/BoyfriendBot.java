@@ -9,6 +9,11 @@ import org.rsinitsyn.props.BotProperties;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendAudio;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -23,7 +28,7 @@ public class BoyfriendBot extends TelegramLongPollingBot implements BoyfriendBot
     @Override
     public void handleUpdate(Update update) {
         try {
-            BotApiMethod<?> botApiMethod = facade.handleUpdate(update);
+            PartialBotApiMethod<?> botApiMethod = facade.handleUpdate(update);
             if (Objects.nonNull(botApiMethod)) {
                 send(botApiMethod);
             } else {
@@ -34,9 +39,20 @@ public class BoyfriendBot extends TelegramLongPollingBot implements BoyfriendBot
         }
     }
 
-    private void send(BotApiMethod<?> method) {
+    private void send(PartialBotApiMethod<?> method) {
+        // OK...It's kinda trash, but let's leave it as it is fow now :)
         try {
-            execute(method);
+            if (method instanceof BotApiMethod<?> botApiMethod) {
+                execute(botApiMethod);
+            } else if (method instanceof SendDocument document) {
+                execute(document);
+            } else if (method instanceof SendVideo video) {
+                execute(video);
+            } else if (method instanceof SendAudio audio) {
+                execute(audio);
+            } else if (method instanceof SendPhoto photo) {
+                execute(photo);
+            }
         } catch (TelegramApiException e) {
             log.error("Message has not been sent.", e);
         }

@@ -14,7 +14,7 @@ spring:
   jpa:
     hibernate:
       # TODO none
-      ddl-auto: update
+      ddl-auto: create
       naming:
         # SnakeCase DB Naming
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy

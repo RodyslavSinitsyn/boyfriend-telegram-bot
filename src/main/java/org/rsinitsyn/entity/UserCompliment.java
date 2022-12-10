@@ -1,11 +1,14 @@
 package org.rsinitsyn.entity;
 
-import jakarta.persistence.Column;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,14 +18,18 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(of = "text")
+@EqualsAndHashCode(of = {"userId", "complimentId"})
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "raw_compliment")
-public class RawCompliment {
+@Table(name = "user_compliment")
+public class UserCompliment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, unique = true)
-    private String text;
+    private Long userId;
+    private Long complimentId;
+    @Enumerated(EnumType.STRING)
+    private ComplimentGrade grade;
 }

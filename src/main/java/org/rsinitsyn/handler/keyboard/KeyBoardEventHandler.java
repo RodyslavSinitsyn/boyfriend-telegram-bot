@@ -1,11 +1,11 @@
 package org.rsinitsyn.handler.keyboard;
 
 import org.rsinitsyn.model.MessageWrapper;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 
-public interface KeyBoardEventHandler {
+public interface KeyBoardEventHandler<T extends PartialBotApiMethod<?>> {
 
-    SendMessage handleEvent(MessageWrapper messageWrapper);
+    T handleEvent(MessageWrapper messageWrapper);
 
     KeyBoardEvent event();
 }

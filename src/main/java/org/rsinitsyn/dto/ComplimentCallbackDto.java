@@ -1,4 +1,4 @@
 package org.rsinitsyn.dto;
 
-public record ComplimentCallbackDto(String cbId, Long id) {
+public record ComplimentCallbackDto(String cbId, Long id, String g) {
 }

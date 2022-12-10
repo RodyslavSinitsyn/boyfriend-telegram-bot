@@ -14,7 +14,7 @@ import org.rsinitsyn.model.MessageWrapper;
 import org.rsinitsyn.model.TelegramUserSession;
 import org.rsinitsyn.service.UserSessionService;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -34,10 +34,10 @@ public class TelegramBotFacade {
 
     // rsinitsyn - 538166938
     // fastysha - 408716263
-    public BotApiMethod<?> handleUpdate(Update update) {
+    public PartialBotApiMethod<?> handleUpdate(Update update) {
         log.info("-----------------------------------------------------");
 
-        BotApiMethod<?> response;
+        PartialBotApiMethod<?> response;
 
         // whatever, just to log and do not throw an exception
         if (!update.hasCallbackQuery() && !update.hasMessage()) {
@@ -89,12 +89,8 @@ public class TelegramBotFacade {
                     .builder()
                     .chatId(message.getChatId())
                     .text("Ку-ку")
+                    .replyMarkup(KeyBoardComponents.mainMenuKeyboardMarkup())
                     .build();
-        }
-
-        SendMessage responseAsSendMessage = ((SendMessage)response);
-        if (responseAsSendMessage.getReplyMarkup() == null) {
-            responseAsSendMessage.setReplyMarkup(KeyBoardComponents.mainMenuKeyboardMarkup());
         }
 
         return response;

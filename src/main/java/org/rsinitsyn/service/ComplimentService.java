@@ -6,13 +6,15 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.rsinitsyn.entity.ComplimentGrade;
 import org.rsinitsyn.entity.RawCompliment;
+import org.rsinitsyn.entity.UserCompliment;
 import org.rsinitsyn.repository.RawComplimentRepository;
+import org.rsinitsyn.repository.UserComplimentRepository;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -25,6 +27,7 @@ public class ComplimentService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     private final RawComplimentRepository rawComplimentRepository;
+    private final UserComplimentRepository userComplimentRepository;
 
     @SneakyThrows
     public RawCompliment get(User user) {
@@ -40,19 +43,20 @@ public class ComplimentService {
                 });
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
-    public void addLike(Long id) {
-        rawComplimentRepository.findById(id)
-                .ifPresent(rawCompliment -> {
-                    rawCompliment.setLikes(
-                            rawCompliment.getLikes() + 1
-                    );
+    @Transactional
+    public void updateGrade(Long userId, Long complimentId, ComplimentGrade grade) {
+        userComplimentRepository.findByUserIdAndComplimentId(
+                userId, complimentId
+        ).ifPresentOrElse(
+                userCompliment -> userCompliment.setGrade(grade),
+                () -> {
+                    UserCompliment userCompliment = new UserCompliment();
+                    userCompliment.setComplimentId(complimentId);
+                    userCompliment.setUserId(userId);
+                    userCompliment.setGrade(grade);
+                    userComplimentRepository.save(userCompliment);
                 });
     }
-
-    public void addDislike(Long id) {
-    }
-
 
     @SneakyThrows
     private String getComplimentFromApi() {

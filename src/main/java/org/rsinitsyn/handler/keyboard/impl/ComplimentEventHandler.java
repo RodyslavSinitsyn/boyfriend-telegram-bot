@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.rsinitsyn.dto.ComplimentCallbackDto;
+import org.rsinitsyn.entity.ComplimentGrade;
 import org.rsinitsyn.entity.RawCompliment;
 import org.rsinitsyn.handler.keyboard.KeyBoardEvent;
 import org.rsinitsyn.handler.keyboard.KeyBoardEventHandler;
@@ -24,7 +25,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ComplimentEventHandler implements KeyBoardEventHandler {
+public class ComplimentEventHandler implements KeyBoardEventHandler<SendMessage> {
 
     private final ComplimentService complimentService;
     private final LocaleMessageService localeMessageService;
@@ -37,17 +38,23 @@ public class ComplimentEventHandler implements KeyBoardEventHandler {
 
         RawCompliment complimentEntity = complimentService.get(message.getFrom());
 
-        ComplimentCallbackDto likeCallbackDto = new ComplimentCallbackDto(
-                "compliment_vote",
-                complimentEntity.getId()
+        InlineKeyboardMarkup voteKeyboard = complimentVoteInlineKeyboardMarkup(
+                new ComplimentCallbackDto(
+                        "compliment_vote",
+                        message.getChatId(),
+                        ComplimentGrade.BAD.name()
+                ),
+                new ComplimentCallbackDto(
+                        "compliment_vote",
+                        complimentEntity.getId(),
+                        ComplimentGrade.GOOD.name()
+                ),
+                new ComplimentCallbackDto(
+                        "compliment_vote",
+                        complimentEntity.getId(),
+                        ComplimentGrade.BEST.name()
+                )
         );
-
-        ComplimentCallbackDto dislikeCallbackDto = new ComplimentCallbackDto(
-                "compliment_vote",
-                complimentEntity.getId()
-        );
-
-        InlineKeyboardMarkup voteKeyboard = complimentVoteInlineKeyboardMarkup(likeCallbackDto, dislikeCallbackDto);
 
         return SendMessage.builder()
                 .chatId(message.getChatId())
@@ -62,10 +69,13 @@ public class ComplimentEventHandler implements KeyBoardEventHandler {
     }
 
     @SneakyThrows
-    private InlineKeyboardMarkup complimentVoteInlineKeyboardMarkup(ComplimentCallbackDto yesDto, ComplimentCallbackDto noDto) {
+    private InlineKeyboardMarkup complimentVoteInlineKeyboardMarkup(ComplimentCallbackDto badCallbackDto,
+                                                                    ComplimentCallbackDto goodCallbackDto,
+                                                                    ComplimentCallbackDto bestCallbackDto) {
         List<InlineKeyboardButton> buttons = new ArrayList<>();
-        buttons.add(simpleKeyBoardButton("Да", objectMapper.writeValueAsString(yesDto)));
-        buttons.add(simpleKeyBoardButton("Нет", objectMapper.writeValueAsString(noDto)));
+        buttons.add(simpleKeyBoardButton(ComplimentGrade.BAD.name(), objectMapper.writeValueAsString(badCallbackDto)));
+        buttons.add(simpleKeyBoardButton(ComplimentGrade.GOOD.name(), objectMapper.writeValueAsString(goodCallbackDto)));
+        buttons.add(simpleKeyBoardButton(ComplimentGrade.BEST.name(), objectMapper.writeValueAsString(bestCallbackDto)));
 
         return InlineKeyboardMarkup.builder()
                 .keyboardRow(buttons)
