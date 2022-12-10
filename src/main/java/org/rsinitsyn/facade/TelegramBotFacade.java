@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.rsinitsyn.components.KeyBoardComponents;
 import org.rsinitsyn.exception.EmptyMessageException;
+import org.rsinitsyn.handler.callback.CallbackFacade;
 import org.rsinitsyn.handler.command.CommandFacade;
 import org.rsinitsyn.handler.keyboard.KeyBoardEvent;
 import org.rsinitsyn.handler.keyboard.KeyBoardEventFacade;
@@ -27,6 +28,8 @@ public class TelegramBotFacade {
 
     private final CommandFacade commandFacade;
     private final KeyBoardEventFacade keyBoardEventFacade;
+    private final CallbackFacade callbackFacade;
+
     private final UserSessionService userSessionService;
 
     // rsinitsyn - 538166938
@@ -42,21 +45,28 @@ public class TelegramBotFacade {
             return null;
         }
 
-        Message message = update.getMessage();
-        if (Objects.isNull(message)) {
-            throw new EmptyMessageException("Message is null");
-        }
+        TelegramUserSession userSession = null;
 
-        TelegramUserSession userSession = userSessionService.getOrCreate(message.getChatId());
         if (update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
+
+            userSession = userSessionService.getOrCreate(callbackQuery.getMessage().getChatId());
+
             log.info("New [callback] from username: {}, chatId: {}, callbackId: {}",
                     callbackQuery.getFrom().getUserName(),
                     callbackQuery.getMessage().getChat().getId(),
                     // TODO Verify what is this ID
                     callbackQuery.getId());
-            return null;
+            return callbackFacade.handleCallback(update.getCallbackQuery(), userSession);
         }
+
+        Message message = update.getMessage();
+        if (Objects.isNull(message)) {
+            throw new EmptyMessageException("Message is null");
+        }
+
+        userSession = userSessionService.getOrCreate(message.getChatId());
+
 
         if (message.isCommand()) {
             response = commandFacade.handle(new MessageWrapper(
@@ -82,7 +92,10 @@ public class TelegramBotFacade {
                     .build();
         }
 
-        ((SendMessage)response).setReplyMarkup(KeyBoardComponents.mainMenuKeyboardMarkup());
+        SendMessage responseAsSendMessage = ((SendMessage)response);
+        if (responseAsSendMessage.getReplyMarkup() == null) {
+            responseAsSendMessage.setReplyMarkup(KeyBoardComponents.mainMenuKeyboardMarkup());
+        }
 
         return response;
     }

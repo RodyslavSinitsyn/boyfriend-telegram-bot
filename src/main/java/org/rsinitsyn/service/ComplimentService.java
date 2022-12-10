@@ -3,7 +3,6 @@ package org.rsinitsyn.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +12,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.objects.User;
 
@@ -26,24 +27,32 @@ public class ComplimentService {
     private final RawComplimentRepository rawComplimentRepository;
 
     @SneakyThrows
-    public String get(User user) {
+    public RawCompliment get(User user) {
         String complimentText = getComplimentFromApi();
 
-        Optional<RawCompliment> complimentFromDb =
-                rawComplimentRepository.findByText(complimentText);
-
-        if (complimentFromDb.isEmpty()) {
-            RawCompliment rawCompliment = new RawCompliment();
-            rawCompliment.setText(complimentText);
-            rawComplimentRepository.save(rawCompliment);
-            log.debug("Compliment saved: {}", complimentText);
-        }
-
-        return complimentText;
+        return rawComplimentRepository.findByText(complimentText)
+                .orElseGet(() -> {
+                    RawCompliment rawCompliment = new RawCompliment();
+                    rawCompliment.setText(complimentText);
+                    RawCompliment saved = rawComplimentRepository.save(rawCompliment);
+                    log.debug("Compliment saved: {}", complimentText);
+                    return saved;
+                });
     }
 
-    record ComplimentDto(String id, String text) {
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void addLike(Long id) {
+        rawComplimentRepository.findById(id)
+                .ifPresent(rawCompliment -> {
+                    rawCompliment.setLikes(
+                            rawCompliment.getLikes() + 1
+                    );
+                });
     }
+
+    public void addDislike(Long id) {
+    }
+
 
     @SneakyThrows
     private String getComplimentFromApi() {
@@ -58,9 +67,12 @@ public class ComplimentService {
         );
         log.debug("Response from compliment API: {}", response);
 
-        ComplimentDto complimentDto = objectMapper.readValue(response.getBody(), ComplimentDto.class);
+        ComplimentResponseDto complimentResponseDto =
+                objectMapper.readValue(response.getBody(), ComplimentResponseDto.class);
 
-        return complimentDto.text();
+        return complimentResponseDto.text();
     }
 
+    record ComplimentResponseDto(String id, String text) {
+    }
 }
