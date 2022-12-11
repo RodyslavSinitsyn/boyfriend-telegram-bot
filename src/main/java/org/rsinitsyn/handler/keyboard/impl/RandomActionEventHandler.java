@@ -1,6 +1,6 @@
 package org.rsinitsyn.handler.keyboard.impl;
 
-import org.rsinitsyn.components.KeyBoardComponents;
+import org.rsinitsyn.components.BotComponents;
 import org.rsinitsyn.handler.keyboard.KeyBoardEvent;
 import org.rsinitsyn.handler.keyboard.KeyBoardEventHandler;
 import org.rsinitsyn.model.MessageWrapper;
@@ -18,7 +18,7 @@ public class RandomActionEventHandler implements KeyBoardEventHandler<SendMessag
                 .builder()
                 .chatId(message.getChatId())
                 .text("Твой выбор....")
-                .replyMarkup(KeyBoardComponents.randomActionKeyBoardMarkup())
+                .replyMarkup(BotComponents.randomActionKeyBoardMarkup())
                 .build();
     }
 

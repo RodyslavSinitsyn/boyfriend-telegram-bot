@@ -1,6 +1,6 @@
 package org.rsinitsyn.handler.keyboard.impl;
 
-import org.rsinitsyn.components.KeyBoardComponents;
+import org.rsinitsyn.components.BotComponents;
 import org.rsinitsyn.handler.keyboard.KeyBoardEvent;
 import org.rsinitsyn.handler.keyboard.KeyBoardEventHandler;
 import org.rsinitsyn.model.MessageWrapper;
@@ -13,7 +13,7 @@ public class BackMenuEventHandler implements KeyBoardEventHandler<SendMessage> {
     public SendMessage handleEvent(MessageWrapper messageWrapper) {
         return SendMessage.builder()
                 .chatId(messageWrapper.getMessage().getChatId())
-                .replyMarkup(KeyBoardComponents.mainMenuKeyboardMarkup())
+                .replyMarkup(BotComponents.mainMenuKeyboardMarkup())
                 .text("Что хочешь?")
                 .build();
     }

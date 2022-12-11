@@ -1,8 +1,8 @@
 bot:
   name: boyfriend_chad_bot
   token: ${BFBOT_TOKEN}
-  notifyOnStartup: true
-  notifyOnShutdown: true
+  notifyOnStartup: false
+  notifyOnShutdown: false
   defaultLocale: ru
 
 spring:
@@ -27,6 +27,8 @@ spring:
     # TODO Work with DB Migration via Liquibase, bot Hibernate
     enabled: false
     change-log: classpath:db/changelog/db.changelog-master.yaml
+  codec:
+    max-in-memory-size: 10MB
 logging:
   level:
     org.rsinitsyn: debug

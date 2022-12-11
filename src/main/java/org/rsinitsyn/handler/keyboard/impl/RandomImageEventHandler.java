@@ -2,6 +2,7 @@ package org.rsinitsyn.handler.keyboard.impl;
 
 import java.io.File;
 import lombok.SneakyThrows;
+import org.rsinitsyn.components.BotComponents;
 import org.rsinitsyn.handler.keyboard.KeyBoardEvent;
 import org.rsinitsyn.handler.keyboard.KeyBoardEventHandler;
 import org.rsinitsyn.model.MessageWrapper;
@@ -24,6 +25,7 @@ public class RandomImageEventHandler implements KeyBoardEventHandler<SendPhoto> 
                 .caption("Тест картинка")
                 .photo(new InputFile(file))
                 .protectContent(true)
+                .replyMarkup(BotComponents.complimentVoteInlineKeyboardMarkup())
                 .build();
     }
 

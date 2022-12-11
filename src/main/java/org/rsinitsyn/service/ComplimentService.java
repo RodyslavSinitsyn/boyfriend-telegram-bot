@@ -43,6 +43,7 @@ public class ComplimentService {
                 });
     }
 
+    // TODO Later should save statistic to DB
     @Transactional
     public void updateGrade(Long userId, Long complimentId, ComplimentGrade grade) {
         userComplimentRepository.findByUserIdAndComplimentId(

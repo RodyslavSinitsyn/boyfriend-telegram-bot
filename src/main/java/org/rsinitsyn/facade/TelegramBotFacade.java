@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.rsinitsyn.components.KeyBoardComponents;
+import org.rsinitsyn.components.BotComponents;
 import org.rsinitsyn.exception.EmptyMessageException;
 import org.rsinitsyn.handler.callback.CallbackFacade;
 import org.rsinitsyn.handler.command.CommandFacade;
@@ -88,7 +88,7 @@ public class TelegramBotFacade {
                     .builder()
                     .chatId(message.getChatId())
                     .text("Ку-ку")
-                    .replyMarkup(KeyBoardComponents.mainMenuKeyboardMarkup())
+                    .replyMarkup(BotComponents.mainMenuKeyboardMarkup())
                     .build();
         }
 

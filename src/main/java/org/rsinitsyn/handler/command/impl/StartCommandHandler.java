@@ -3,7 +3,7 @@ package org.rsinitsyn.handler.command.impl;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.rsinitsyn.components.KeyBoardComponents;
+import org.rsinitsyn.components.BotComponents;
 import org.rsinitsyn.entity.TelegramUser;
 import org.rsinitsyn.handler.command.CommandHandler;
 import org.rsinitsyn.model.MessageWrapper;
@@ -35,7 +35,7 @@ public class StartCommandHandler implements CommandHandler {
                 .builder()
                 .chatId(chat.getId())
                 .text(messageService.getMessage("reply.start", session.getLocale()))
-                .replyMarkup(KeyBoardComponents.mainMenuKeyboardMarkup())
+                .replyMarkup(BotComponents.mainMenuKeyboardMarkup())
                 .build();
     }
 
