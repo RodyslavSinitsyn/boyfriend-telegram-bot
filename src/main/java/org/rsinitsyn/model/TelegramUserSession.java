@@ -11,5 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class TelegramUserSession {
 
+    private Long chatId;
+    private String username;
     private Locale locale;
 }

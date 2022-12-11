@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class BotProperties {
     private String name;
     private String token;
-    private Boolean notifyOnStartup = Boolean.FALSE;
-    private Boolean notifyOnShutdown = Boolean.FALSE;
+    private boolean notifyOnStartup;
+    private boolean notifyOnShutdown;
     private String defaultLocale;
 }

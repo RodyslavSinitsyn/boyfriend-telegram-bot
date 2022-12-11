@@ -2,6 +2,7 @@ package org.rsinitsyn.bot;
 
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.rsinitsyn.api.BoyfriendBotApi;
 import org.rsinitsyn.facade.TelegramBotFacade;
@@ -12,6 +13,7 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendAudio;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -39,6 +41,26 @@ public class BoyfriendBot extends TelegramLongPollingBot implements BoyfriendBot
         }
     }
 
+    @SneakyThrows
+    @Override
+    public void notifyOnStartup() {
+        if (botProperties.isNotifyOnStartup()) {
+            for (SendMessage message : facade.getNotificationMessagesOnStartup()) {
+                send(message);
+            }
+        }
+    }
+
+    @SneakyThrows
+    @Override
+    public void notifyOnShutdown() {
+        if (botProperties.isNotifyOnShutdown()) {
+            for (SendMessage message : facade.getNotificationMessagesOnShutdown()) {
+                send(message);
+            }
+        }
+    }
+
     private void send(PartialBotApiMethod<?> method) {
         // OK...It's kinda trash, but let's leave it as it is fow now :)
         try {
@@ -55,20 +77,6 @@ public class BoyfriendBot extends TelegramLongPollingBot implements BoyfriendBot
             }
         } catch (TelegramApiException e) {
             log.error("Message has not been sent.", e);
-        }
-    }
-
-    @Override
-    public void notifyOnInit() {
-        if (botProperties.getNotifyOnStartup()) {
-            // TODO Notify
-        }
-    }
-
-    @Override
-    public void notifyOnShutdown() {
-        if (botProperties.getNotifyOnShutdown()) {
-            // TODO Notify
         }
     }
 

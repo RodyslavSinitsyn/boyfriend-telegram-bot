@@ -24,19 +24,22 @@ public class UserSessionService {
         this.botProperties = botProperties;
     }
 
-    public TelegramUserSession getOrCreate(Long chatId) {
+    public TelegramUserSession getOrCreate(Long chatId, String username) {
         return Optional.ofNullable(sessions.get(chatId))
-                .orElseGet(() -> create(chatId));
+                .orElseGet(() -> create(chatId, username));
     }
 
     public TelegramUserSession get(Long chatId) {
         return sessions.get(chatId);
     }
 
-    public TelegramUserSession create(Long chatId) {
-        sessions.put(chatId, defaultSession());
-        log.info("User session saved, chatId: {}", chatId);
-        return defaultSession();
+    public TelegramUserSession create(Long chatId, String username) {
+        TelegramUserSession session = defaultSession();
+        session.setChatId(chatId);
+        session.setUsername(username);
+        sessions.put(chatId, session);
+        log.info("User session saved, username: {}, chatId: {}", username, chatId);
+        return session;
     }
 
     private TelegramUserSession defaultSession() {

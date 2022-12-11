@@ -1,6 +1,7 @@
 package org.rsinitsyn.listener;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.rsinitsyn.bot.BoyfriendBot;
 import org.springframework.context.event.ContextClosedEvent;
@@ -23,8 +24,6 @@ public class BotEventListener {
     @EventListener(ContextRefreshedEvent.class)
     public void initBot() {
         try {
-            bot.execute(botCommands);
-
             TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
             telegramBotsApi.registerBot(bot);
 
@@ -33,6 +32,13 @@ public class BotEventListener {
             log.error("Error during bot initializing", e);
             throw new RuntimeException(e);
         }
+    }
+
+    @SneakyThrows
+    @EventListener(ContextRefreshedEvent.class)
+    public void onStartup() {
+        bot.execute(botCommands);
+        bot.notifyOnStartup();
     }
 
     @EventListener(ContextClosedEvent.class)

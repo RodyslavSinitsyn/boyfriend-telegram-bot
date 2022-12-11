@@ -34,6 +34,12 @@ public class CallbackFacade {
         Message message = callbackQuery.getMessage();
         String jsonData = callbackQuery.getData();
 
+        log.info("New [callback] from username: {}, chatId: {}, callbackId: {}",
+                message.getFrom().getUserName(),
+                message.getChat().getId(),
+                // TODO Verify what is this ID
+                callbackQuery.getId());
+
         ComplimentCallbackDto complimentCallbackDto = objectMapper.readValue(jsonData, ComplimentCallbackDto.class);
 
         log.debug("Compliment callback details, id: {}, grade: {}",
@@ -48,6 +54,7 @@ public class CallbackFacade {
                 .filter(btn -> btn.getText().equals(complimentGrade.name()))
                 .findFirst().orElseThrow();
         buttonToUpdate.setText(buttonToUpdate.getText() + Emoji.CHECK_DONE);
+        buttonToUpdate.
 
         return EditMessageReplyMarkup.builder()
                 .chatId(message.getChatId())

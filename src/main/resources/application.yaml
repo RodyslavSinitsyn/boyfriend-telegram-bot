@@ -1,9 +1,9 @@
 bot:
   name: boyfriend_chad_bot
   token: ${BFBOT_TOKEN}
-  nofity-on-startup: true
-  notify-on-shutdown: true
-  default-locale: ru
+  notifyOnStartup: true
+  notifyOnShutdown: true
+  defaultLocale: ru
 
 spring:
   datasource:
@@ -14,7 +14,7 @@ spring:
   jpa:
     hibernate:
       # TODO none
-      ddl-auto: create
+      ddl-auto: update
       naming:
         # SnakeCase DB Naming
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy

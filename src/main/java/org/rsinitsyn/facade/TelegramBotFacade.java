@@ -1,7 +1,7 @@
 package org.rsinitsyn.facade;
 
+import java.util.Collection;
 import java.util.Objects;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.rsinitsyn.components.KeyBoardComponents;
@@ -12,6 +12,7 @@ import org.rsinitsyn.handler.keyboard.KeyBoardEvent;
 import org.rsinitsyn.handler.keyboard.KeyBoardEventFacade;
 import org.rsinitsyn.model.MessageWrapper;
 import org.rsinitsyn.model.TelegramUserSession;
+import org.rsinitsyn.repository.TelegramUserRepository;
 import org.rsinitsyn.service.UserSessionService;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
@@ -31,6 +32,7 @@ public class TelegramBotFacade {
     private final CallbackFacade callbackFacade;
 
     private final UserSessionService userSessionService;
+    private final TelegramUserRepository telegramUserRepository;
 
     // rsinitsyn - 538166938
     // fastysha - 408716263
@@ -49,15 +51,10 @@ public class TelegramBotFacade {
 
         if (update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
-
-            userSession = userSessionService.getOrCreate(callbackQuery.getMessage().getChatId());
-
-            log.info("New [callback] from username: {}, chatId: {}, callbackId: {}",
-                    callbackQuery.getFrom().getUserName(),
-                    callbackQuery.getMessage().getChat().getId(),
-                    // TODO Verify what is this ID
-                    callbackQuery.getId());
-            return callbackFacade.handleCallback(update.getCallbackQuery(), userSession);
+            userSession = userSessionService.getOrCreate(
+                    callbackQuery.getMessage().getChatId(),
+                    callbackQuery.getMessage().getChat().getUserName());
+            return callbackFacade.handleCallback(callbackQuery, userSession);
         }
 
         Message message = update.getMessage();
@@ -65,7 +62,9 @@ public class TelegramBotFacade {
             throw new EmptyMessageException("Message is null");
         }
 
-        userSession = userSessionService.getOrCreate(message.getChatId());
+        userSession = userSessionService.getOrCreate(
+                message.getChatId(),
+                message.getChat().getUserName());
 
 
         if (message.isCommand()) {
@@ -96,16 +95,26 @@ public class TelegramBotFacade {
         return response;
     }
 
+    public Collection<SendMessage> getNotificationMessagesOnStartup() {
+        return telegramUserRepository.findAll()
+                .stream()
+                .map(telegramUser -> SendMessage.builder()
+                        .chatId(telegramUser.getChatId())
+                        .text("Я проснулся и готов с тобой пообщаться")
+                        .build()
+                )
+                .toList();
+    }
 
-    // TODO Remove?
-    private void verifyMessage(Update update) {
-        Message message = Optional.of(update)
-                .map(Update::getMessage)
-                .orElseThrow(() -> new EmptyMessageException("Message is null"));
-
-        if (!message.hasText()) {
-            log.warn("Message does not contain any text. ChatId: {}. Telegram user: {}", message.getChat().getId(), message.getChat().getUserName());
-            throw new EmptyMessageException("Message text is empty");
-        }
+    public Collection<SendMessage> getNotificationMessagesOnShutdown() {
+        return telegramUserRepository.findAll()
+                .stream()
+                .map(telegramUser -> SendMessage.builder()
+                        .chatId(telegramUser.getChatId())
+                        .text("Я пока отдохну, спишемся позже :)")
+                        .disableNotification(true)
+                        .build()
+                )
+                .toList();
     }
 }
