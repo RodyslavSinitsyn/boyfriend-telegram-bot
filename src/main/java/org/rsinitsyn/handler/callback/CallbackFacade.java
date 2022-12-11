@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.rsinitsyn.components.BotComponents;
 import org.rsinitsyn.dto.AssetVoteDto;
 import org.rsinitsyn.model.TelegramUserSession;
-import org.rsinitsyn.service.ComplimentService;
+import org.rsinitsyn.props.ApiProperties;
 import org.rsinitsyn.utils.Emoji;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
@@ -22,7 +22,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 @Slf4j
 public class CallbackFacade {
 
-    private final ComplimentService complimentService;
+    private final ApiProperties apiProperties;
     private final ObjectMapper objectMapper;
 
     // TODO Handle other callbacks
@@ -33,8 +33,8 @@ public class CallbackFacade {
         if (message.getGame() != null) {
             return AnswerCallbackQuery
                     .builder()
+                    .url(apiProperties.getGameApiUrl())
                     .callbackQueryId(callbackQuery.getId())
-                    .url("https://games.cdn.famobi.com/html5games/0/3d-free-kick/v080/?fg_domain=play.famobi.com&fg_aid=A1000-100&fg_uid=2ee096ab-4cd7-4f9a-baa9-f58a54413c47&fg_pid=5a106c0b-28b5-48e2-ab01-ce747dda340f&fg_beat=626&original_ref=https%3A%2F%2Fhtml5games.com%2F")
                     .build();
         }
 

@@ -1,12 +1,13 @@
 package org.rsinitsyn;
 
+import org.rsinitsyn.props.ApiProperties;
 import org.rsinitsyn.props.BotProperties;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
-@EnableConfigurationProperties(value = BotProperties.class)
+@EnableConfigurationProperties(value = {ApiProperties.class, BotProperties.class})
 @SpringBootApplication
 public class BoyfriendTelegramBotApplication {
 

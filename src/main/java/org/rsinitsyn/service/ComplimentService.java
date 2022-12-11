@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.rsinitsyn.entity.ComplimentGrade;
 import org.rsinitsyn.entity.RawCompliment;
 import org.rsinitsyn.entity.UserCompliment;
+import org.rsinitsyn.props.ApiProperties;
 import org.rsinitsyn.repository.RawComplimentRepository;
 import org.rsinitsyn.repository.UserComplimentRepository;
 import org.springframework.http.HttpEntity;
@@ -29,6 +30,7 @@ public class ComplimentService {
     private final ObjectMapper objectMapper;
     private final RawComplimentRepository rawComplimentRepository;
     private final UserComplimentRepository userComplimentRepository;
+    private final ApiProperties apiProperties;
 
     @SneakyThrows
     public RawCompliment get(User user) {
@@ -65,7 +67,7 @@ public class ComplimentService {
         HttpEntity httpEntity = new HttpEntity(Map.of());
 
         ResponseEntity<String> response = restTemplate.exchange(
-                "https://ultragenerator.com/compliment/handler.php",
+                apiProperties.getComplimentApiUrl(),
                 HttpMethod.POST,
                 httpEntity,
                 String.class,

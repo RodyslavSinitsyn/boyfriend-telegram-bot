@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.rsinitsyn.props.ApiProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -18,6 +19,7 @@ public class JokeService {
 
     private final WebClient webClient;
     private final ObjectMapper objectMapper;
+    private final ApiProperties apiProperties;
 
     public String get(User user) {
         return getJokeFromApi();
@@ -26,7 +28,7 @@ public class JokeService {
     @SneakyThrows
     public String getJokeFromApi() {
         ResponseEntity<String> response = webClient.get()
-                .uri("http://free-generator.ru/generator.php?action=joke")
+                .uri(apiProperties.getJokeApiUrl())
                 .retrieve()
                 .toEntity(String.class)
                 .block();

@@ -12,7 +12,7 @@ public enum KeyBoardEvent {
 
     RANDOM_ACTION("Еще контента \uD83D\uDC40"),
     IMAGE("Картинку"),
-    VIDEO("Видео"),
+    GIF("Гифку"),
     AUDIO("Аудио"),
     DOCUMENT("Документ"),
 

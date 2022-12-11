@@ -5,6 +5,11 @@ bot:
   notifyOnShutdown: false
   defaultLocale: ru
 
+api:
+  complimentApiUrl: https://ultragenerator.com/compliment/handler.php
+  jokeApiUrl: http://free-generator.ru/generator.php?action=joke
+  gameApiUrl: https://games.cdn.famobi.com/html5games/0/3d-free-kick/v080/?fg_domain=play.famobi.com&fg_aid=A1000-100&fg_uid=2ee096ab-4cd7-4f9a-baa9-f58a54413c47&fg_pid=5a106c0b-28b5-48e2-ab01-ce747dda340f&fg_beat=626&original_ref=https%3A%2F%2Fhtml5games.com%2F
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/bf_bot

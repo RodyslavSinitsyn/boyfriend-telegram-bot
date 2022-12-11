@@ -16,10 +16,10 @@ import static org.rsinitsyn.handler.keyboard.KeyBoardEvent.BACK_TO_MENU;
 import static org.rsinitsyn.handler.keyboard.KeyBoardEvent.COMPLIMENT;
 import static org.rsinitsyn.handler.keyboard.KeyBoardEvent.DOCUMENT;
 import static org.rsinitsyn.handler.keyboard.KeyBoardEvent.GAME;
+import static org.rsinitsyn.handler.keyboard.KeyBoardEvent.GIF;
 import static org.rsinitsyn.handler.keyboard.KeyBoardEvent.IMAGE;
 import static org.rsinitsyn.handler.keyboard.KeyBoardEvent.JOKE;
 import static org.rsinitsyn.handler.keyboard.KeyBoardEvent.RANDOM_ACTION;
-import static org.rsinitsyn.handler.keyboard.KeyBoardEvent.VIDEO;
 
 // TODO utility class?
 public class BotComponents {
@@ -37,7 +37,7 @@ public class BotComponents {
 
     public static ReplyKeyboardMarkup randomActionKeyBoardMarkup() {
         return ReplyKeyboardMarkup.builder()
-                .keyboardRow(rowOf(new KeyboardButton(VIDEO.getText()), new KeyboardButton(AUDIO.getText())))
+                .keyboardRow(rowOf(new KeyboardButton(GIF.getText()), new KeyboardButton(AUDIO.getText())))
                 .keyboardRow(rowOf(new KeyboardButton(DOCUMENT.getText()), new KeyboardButton(IMAGE.getText())))
                 .keyboardRow(rowOf(new KeyboardButton(BACK_TO_MENU.getText())))
                 .build();
