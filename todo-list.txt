@@ -1,0 +1,9 @@
+FUTURE UPDATES:
+
+- For assets, need to get random resources instead of static
+- Save Vote statistic to the Database
+- 'Add Real Boyfriend' functionality and related DB Entities
+- Verify multithreading possible issues
+- Implement /feedback command
+- Run everything in Docker environment
+- Use liquibase instead of Hibernate for DB migration
