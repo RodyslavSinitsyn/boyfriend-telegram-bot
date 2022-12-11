@@ -87,7 +87,7 @@ public class TelegramBotFacade {
             response = SendMessage
                     .builder()
                     .chatId(message.getChatId())
-                    .text("Ку-ку")
+                    .text("Я скоро научусь общаться и мы обязательно это обсудим!")
                     .replyMarkup(BotComponents.mainMenuKeyboardMarkup())
                     .build();
         }
@@ -100,7 +100,7 @@ public class TelegramBotFacade {
                 .stream()
                 .map(telegramUser -> SendMessage.builder()
                         .chatId(telegramUser.getChatId())
-                        .text("Я проснулся и готов с тобой пообщаться")
+                        .text("Я проснулся и могу тебя развлечь")
                         .build()
                 )
                 .toList();

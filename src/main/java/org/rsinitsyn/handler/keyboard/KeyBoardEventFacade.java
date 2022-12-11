@@ -36,7 +36,7 @@ public class KeyBoardEventFacade {
             return SendMessage
                     .builder()
                     .chatId(message.getChatId())
-                    .text("In progress to implement...")
+                    .text("Пока не могу тебе на это ответить...")
                     .build();
         }
 

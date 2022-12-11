@@ -32,7 +32,7 @@ public class LanguageCommandHandler implements CommandHandler {
         return SendMessage
                 .builder()
                 .chatId(message.getChatId())
-                .text(localeMessageService.getMessage("reply.localeUpdate", session.getLocale()))
+                .text(localeMessageService.getMessage("reply.changeLang", session.getLocale()))
                 .build();
     }
 

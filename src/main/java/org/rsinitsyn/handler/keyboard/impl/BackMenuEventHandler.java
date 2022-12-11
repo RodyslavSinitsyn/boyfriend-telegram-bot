@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 @Component
 public class BackMenuEventHandler implements KeyBoardEventHandler<SendMessage> {
+
     @Override
     public SendMessage handleEvent(MessageWrapper messageWrapper) {
         return SendMessage.builder()
