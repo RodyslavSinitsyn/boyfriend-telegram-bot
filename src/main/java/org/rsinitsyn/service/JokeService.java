@@ -19,9 +19,7 @@ public class JokeService {
     private final ObjectMapper objectMapper;
 
     public String get(User user) {
-        String jokeText = getJokeFromApi();
-
-        return jokeText;
+        return getJokeFromApi();
     }
 
     @SneakyThrows
@@ -31,9 +29,15 @@ public class JokeService {
                 .retrieve()
                 .toEntity(String.class)
                 .block();
+        log.debug("Response from Joke API: {}", response);
+
 
         JsonNode jsonNode = objectMapper.readTree(response.getBody());
+        String text = jsonNode.get("joke").get("joke").asText();
+        return cleanup(text);
+    }
 
-        return jsonNode.get("joke").get("joke").asText();
+    private String cleanup(String text) {
+        return text.replaceAll("<br>", "\n");
     }
 }

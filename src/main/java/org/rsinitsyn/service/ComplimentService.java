@@ -6,6 +6,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.rsinitsyn.entity.ComplimentGrade;
 import org.rsinitsyn.entity.RawCompliment;
 import org.rsinitsyn.entity.UserCompliment;
@@ -70,12 +71,16 @@ public class ComplimentService {
                 String.class,
                 Collections.emptyMap()
         );
-        log.debug("Response from compliment API: {}", response);
+        log.debug("Response from Compliment API: {}", response);
 
         ComplimentResponseDto complimentResponseDto =
                 objectMapper.readValue(response.getBody(), ComplimentResponseDto.class);
 
-        return complimentResponseDto.text();
+        return format(complimentResponseDto.text());
+    }
+
+    private String format(String text) {
+        return StringUtils.capitalize(text);
     }
 
     record ComplimentResponseDto(String id, String text) {

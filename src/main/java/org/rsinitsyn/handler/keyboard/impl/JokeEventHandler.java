@@ -10,6 +10,7 @@ import org.rsinitsyn.service.JokeService;
 import org.rsinitsyn.service.LocaleMessageService;
 import org.rsinitsyn.utils.Emoji;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
@@ -32,6 +33,7 @@ public class JokeEventHandler implements KeyBoardEventHandler<SendMessage> {
                                 messageWrapper.getSession().getLocale(),
                                 joke,
                                 Emoji.LAUGH.getValue()))
+                .parseMode(ParseMode.HTML)
                 .replyMarkup(BotComponents.complimentVoteInlineKeyboardMarkup())
                 .build();
     }

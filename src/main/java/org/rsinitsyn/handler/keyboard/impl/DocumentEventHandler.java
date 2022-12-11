@@ -13,7 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 @Component
-public class RandomDocumentEventHandler implements KeyBoardEventHandler<SendDocument> {
+public class DocumentEventHandler implements KeyBoardEventHandler<SendDocument> {
     @SneakyThrows
     @Override
     public SendDocument handleEvent(MessageWrapper messageWrapper) {

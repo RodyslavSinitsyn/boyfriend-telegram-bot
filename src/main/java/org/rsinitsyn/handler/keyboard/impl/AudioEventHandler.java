@@ -13,7 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 @Component
-public class RandomAudioEventHandler implements KeyBoardEventHandler<SendAudio> {
+public class AudioEventHandler implements KeyBoardEventHandler<SendAudio> {
     @SneakyThrows
     @Override
     public SendAudio handleEvent(MessageWrapper messageWrapper) {

@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.rsinitsyn.dto.AssetVoteDto;
-import org.rsinitsyn.utils.Emoji;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -57,16 +56,13 @@ public class BotComponents {
     }
 
     public static InlineKeyboardButton voteInlineKeyboardButton() {
-        return voteInlineKeyboardButton(new AssetVoteDto("vote", false));
+        return voteInlineKeyboardButton(new AssetVoteDto("vote", false), "Нравится");
     }
 
     @SneakyThrows
-    public static InlineKeyboardButton voteInlineKeyboardButton(AssetVoteDto voteDto) {
-        String textToShow = voteDto.liked() ?
-                "Нравится" + Emoji.HEART.getValue() :
-                "Нравится";
+    public static InlineKeyboardButton voteInlineKeyboardButton(AssetVoteDto voteDto, String text) {
         InlineKeyboardButton button = new InlineKeyboardButton();
-        button.setText(textToShow);
+        button.setText(text);
         button.setCallbackData(MAPPER.writeValueAsString(voteDto));
         return button;
     }

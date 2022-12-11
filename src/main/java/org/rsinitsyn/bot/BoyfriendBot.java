@@ -65,7 +65,7 @@ public class BoyfriendBot extends TelegramLongPollingBot implements BoyfriendBot
         // OK...It's kinda trash, but let's leave it as it is fow now :)
         try {
             if (method instanceof BotApiMethod<?> botApiMethod) {
-                execute(botApiMethod);
+                 execute(botApiMethod);
             } else if (method instanceof SendDocument document) {
                 execute(document);
             } else if (method instanceof SendVideo video) {

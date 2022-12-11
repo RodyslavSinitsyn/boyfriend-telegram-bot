@@ -8,6 +8,7 @@ import org.rsinitsyn.components.BotComponents;
 import org.rsinitsyn.dto.AssetVoteDto;
 import org.rsinitsyn.model.TelegramUserSession;
 import org.rsinitsyn.service.ComplimentService;
+import org.rsinitsyn.utils.Emoji;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
@@ -36,8 +37,8 @@ public class CallbackFacade {
                 assetVoteDto.cbid());
 
         InlineKeyboardButton button = assetVoteDto.liked() ?
-                BotComponents.voteInlineKeyboardButton() :
-                BotComponents.voteInlineKeyboardButton(new AssetVoteDto("vote", true));
+                BotComponents.voteInlineKeyboardButton(new AssetVoteDto("vote", false), "Нравится") :
+                BotComponents.voteInlineKeyboardButton(new AssetVoteDto("vote", true), "Нравится" + Emoji.HEART.getValue());
 
         return EditMessageReplyMarkup.builder()
                 .chatId(message.getChatId())
