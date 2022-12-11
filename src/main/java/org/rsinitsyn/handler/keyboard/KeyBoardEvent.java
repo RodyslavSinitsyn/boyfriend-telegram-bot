@@ -8,6 +8,7 @@ public enum KeyBoardEvent {
     // TODO How to translate to English?
     COMPLIMENT("Хочу комплимент \uD83C\uDF38"),
     JOKE("Хочу прикол \uD83D\uDE04"),
+    GAME("Играть в игру \uD83C\uDFB2"),
 
     RANDOM_ACTION("Еще контента \uD83D\uDC40"),
     IMAGE("Картинку"),

@@ -10,6 +10,7 @@ import org.rsinitsyn.model.TelegramUserSession;
 import org.rsinitsyn.service.ComplimentService;
 import org.rsinitsyn.utils.Emoji;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -28,6 +29,15 @@ public class CallbackFacade {
     @SneakyThrows
     public BotApiMethod<?> handleCallback(CallbackQuery callbackQuery, TelegramUserSession session) {
         Message message = callbackQuery.getMessage();
+
+        if (message.getGame() != null) {
+            return AnswerCallbackQuery
+                    .builder()
+                    .callbackQueryId(callbackQuery.getId())
+                    .url("https://games.cdn.famobi.com/html5games/0/3d-free-kick/v080/?fg_domain=play.famobi.com&fg_aid=A1000-100&fg_uid=2ee096ab-4cd7-4f9a-baa9-f58a54413c47&fg_pid=5a106c0b-28b5-48e2-ab01-ce747dda340f&fg_beat=626&original_ref=https%3A%2F%2Fhtml5games.com%2F")
+                    .build();
+        }
+
         String jsonData = callbackQuery.getData();
         var assetVoteDto = objectMapper.readValue(jsonData, AssetVoteDto.class);
 

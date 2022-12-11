@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -23,7 +24,7 @@ public class JokeService {
     }
 
     @SneakyThrows
-    private String getJokeFromApi() {
+    public String getJokeFromApi() {
         ResponseEntity<String> response = webClient.get()
                 .uri("http://free-generator.ru/generator.php?action=joke")
                 .retrieve()
@@ -34,10 +35,10 @@ public class JokeService {
 
         JsonNode jsonNode = objectMapper.readTree(response.getBody());
         String text = jsonNode.get("joke").get("joke").asText();
-        return cleanup(text);
+        return format(text);
     }
 
-    private String cleanup(String text) {
-        return text.replaceAll("<br>", "\n");
+    private String format(String text) {
+        return StringUtils.capitalize(text.replaceAll("<br>", "\n"));
     }
 }

@@ -15,6 +15,7 @@ import static org.rsinitsyn.handler.keyboard.KeyBoardEvent.AUDIO;
 import static org.rsinitsyn.handler.keyboard.KeyBoardEvent.BACK_TO_MENU;
 import static org.rsinitsyn.handler.keyboard.KeyBoardEvent.COMPLIMENT;
 import static org.rsinitsyn.handler.keyboard.KeyBoardEvent.DOCUMENT;
+import static org.rsinitsyn.handler.keyboard.KeyBoardEvent.GAME;
 import static org.rsinitsyn.handler.keyboard.KeyBoardEvent.IMAGE;
 import static org.rsinitsyn.handler.keyboard.KeyBoardEvent.JOKE;
 import static org.rsinitsyn.handler.keyboard.KeyBoardEvent.RANDOM_ACTION;
@@ -29,6 +30,7 @@ public class BotComponents {
         return ReplyKeyboardMarkup.builder()
                 .keyboardRow(rowOf(new KeyboardButton(COMPLIMENT.getText())))
                 .keyboardRow(rowOf(new KeyboardButton(JOKE.getText())))
+                .keyboardRow(rowOf(new KeyboardButton(GAME.getText())))
                 .keyboardRow(rowOf(new KeyboardButton(RANDOM_ACTION.getText())))
                 .build();
     }
