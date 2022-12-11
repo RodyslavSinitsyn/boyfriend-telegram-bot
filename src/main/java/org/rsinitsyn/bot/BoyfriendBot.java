@@ -1,6 +1,6 @@
 package org.rsinitsyn.bot;
 
-import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -29,16 +29,19 @@ public class BoyfriendBot extends TelegramLongPollingBot implements BoyfriendBot
 
     @Override
     public void handleUpdate(Update update) {
-        try {
-            PartialBotApiMethod<?> botApiMethod = facade.handleUpdate(update);
-            if (Objects.nonNull(botApiMethod)) {
-                send(botApiMethod);
-            } else {
-                log.debug("Does not need to send response back");
-            }
-        } catch (Exception exception) {
-            log.error("Failed to handle user message", exception);
-        }
+        CompletableFuture
+                .supplyAsync(() -> facade.handleUpdate(update))
+                .thenAccept(partialBotApiMethod -> {
+                    if (partialBotApiMethod != null) {
+                        send(partialBotApiMethod);
+                    } else {
+                        log.debug("Does not need to send response back");
+                    }
+                })
+                .exceptionally(throwable -> {
+                    log.error("Failed to handle user message", throwable);
+                    return null;
+                });
     }
 
     @SneakyThrows
@@ -65,7 +68,7 @@ public class BoyfriendBot extends TelegramLongPollingBot implements BoyfriendBot
         // OK...It's kinda trash, but let's leave it as it is fow now :)
         try {
             if (method instanceof BotApiMethod<?> botApiMethod) {
-                 execute(botApiMethod);
+                execute(botApiMethod);
             } else if (method instanceof SendDocument document) {
                 execute(document);
             } else if (method instanceof SendAnimation animationGif) {
